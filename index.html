@@ -645,15 +645,24 @@ function showManualCopy(text){
  var ta=document.getElementById('copyManual');
  ta.focus();ta.select();ta.setSelectionRange(0,ta.value.length);
 }
+function notifyCopied(){
+ var btn=document.getElementById('copyBtn');
+ if(!btn)return;
+ var old=btn.textContent;
+ btn.textContent='✓ Скопировано! Отправьте в MAX или Telegram';
+ btn.style.background='linear-gradient(135deg,#2fd08c,#1ea86b)';
+ clearTimeout(window.__ct);
+ window.__ct=setTimeout(function(){btn.textContent=old;btn.style.background='';},3600);
+}
 function copyKpi(){
  var text=kpiText();
  if(navigator.clipboard&&navigator.clipboard.writeText){
-  navigator.clipboard.writeText(text).then(function(){showToast('Расчёт и контекст проекта скопированы — отправьте интегратору (MAX или Telegram)');},function(){finishCopy(text);});
+  navigator.clipboard.writeText(text).then(function(){notifyCopied();},function(){finishCopy(text);});
  }
  else{finishCopy(text);}
 }
 function finishCopy(text){
- if(fallbackCopy(text)){showToast('Расчёт и контекст проекта скопированы — отправьте интегратору (MAX или Telegram)');}
+ if(fallbackCopy(text)){notifyCopied();}
  else{showManualCopy(text);}
 }
 document.getElementById('copyBtn').addEventListener('click',copyKpi);
