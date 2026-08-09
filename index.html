@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Автоматизация первой линии РусПром — персональный проект | ЮгСпецСети</title>
+<meta name="description" content="Персональный проект автоматизации обработки заявок ООО «РусПром»: два ИИ-агента 24/7 — квалификатор оборудования и техподдержка по запчастям. Расчёт ROI онлайн.">
+<style>
+:root{
+  --bg:#0c1118; --bg2:#111927; --card:#16202f; --card2:#1b2940;
+  --line:#26374e; --txt:#e8eef6; --mut:#93a5bd; --dim:#5f7189;
+  --acc:#ff8a1e; --acc2:#ffb35c; --grn:#2fd08c; --blu:#4da3ff; --red:#ff5d5d;
+  --grad:linear-gradient(135deg,#ff8a1e,#ff5d3a);
+  --rad:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.6;font-size:16px}
+.wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+a{color:var(--blu);text-decoration:none}
+h1,h2,h3{line-height:1.25;font-weight:700}
+h2{font-size:clamp(24px,3.4vw,36px);margin-bottom:14px}
+.sub{color:var(--mut);max-width:760px;margin-bottom:36px}
+section{padding:72px 0;border-bottom:1px solid var(--line)}
+.tag{display:inline-block;background:rgba(255,138,30,.12);color:var(--acc);border:1px solid rgba(255,138,30,.35);border-radius:99px;padding:4px 14px;font-size:13px;font-weight:600;letter-spacing:.4px;margin-bottom:16px;text-transform:uppercase}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){.grid3,.grid4{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.grid2,.grid3,.grid4{grid-template-columns:1fr}section{padding:52px 0}}
+
+header{position:sticky;top:0;z-index:50;background:rgba(12,17,24,.92);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;color:var(--txt)}
+.logo .mark{width:34px;height:34px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:800}
+.logo small{display:block;font-weight:400;color:var(--mut);font-size:11px;line-height:1.2}
+nav{display:flex;gap:22px;font-size:14px}
+nav a{color:var(--mut);transition:.2s}
+nav a:hover{color:var(--acc)}
+@media(max-width:900px){nav{display:none}}
+.hd-cta{background:var(--grad);color:#fff;padding:9px 18px;border-radius:10px;font-weight:600;font-size:14px}
+
+.hero{padding:84px 0 72px;background:
+  radial-gradient(900px 400px at 80% -10%,rgba(255,138,30,.14),transparent 60%),
+  radial-gradient(700px 400px at 10% 110%,rgba(77,163,255,.1),transparent 60%),var(--bg)}
+.hero h1{font-size:clamp(28px,4.6vw,50px);max-width:900px}
+.hero h1 span{color:var(--acc2)}
+.hero .pers{margin-top:18px;color:var(--mut);font-size:15px}
+.hero .pers b{color:var(--txt)}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px}
+@media(max-width:900px){.hero-stats{grid-template-columns:1fr 1fr}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:20px}
+.stat .v{font-size:clamp(22px,2.6vw,30px);font-weight:800;color:var(--acc2)}
+.stat .l{color:var(--mut);font-size:13px;margin-top:4px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:26px}
+.card h3{margin-bottom:8px;font-size:18px}
+.card p{color:var(--mut);font-size:14.5px}
+.icn{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px;background:rgba(255,138,30,.13)}
+
+.flow{display:flex;flex-direction:column;gap:0;align-items:center;margin-top:10px}
+.fnode{width:100%;max-width:640px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:18px 22px;position:relative}
+.fnode b{color:var(--acc2)}
+.fnode .role{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);margin-bottom:4px}
+.fnode ul{margin:8px 0 0 18px;color:var(--mut);font-size:14px}
+.fnode ul li{margin-bottom:5px}
+.fnode p.note2{color:var(--mut);font-size:14px;margin-top:8px}
+.farrow{width:2px;height:34px;background:linear-gradient(#ff8a1e,transparent);position:relative}
+.farrow:after{content:"\25BC";position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);color:var(--acc);font-size:11px}
+.branch{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:900px}
+@media(max-width:640px){.branch{grid-template-columns:1fr}}
+.bnode{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;border-top:3px solid var(--blu)}
+.bnode.orange{border-top-color:var(--acc)}
+.bnode ul{margin:10px 0 0 18px;color:var(--mut);font-size:14px}
+.bnode ul li{margin-bottom:6px}
+.pill{display:inline-block;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:600}
+.pill.b{background:rgba(77,163,255,.14);color:var(--blu)}
+.pill.o{background:rgba(255,138,30,.14);color:var(--acc)}
+
+.chat{background:#0f1622;border:1px solid var(--line);border-radius:var(--rad);overflow:hidden}
+.chat-hd{background:var(--card2);padding:12px 18px;font-size:13px;color:var(--mut);display:flex;justify-content:space-between;border-bottom:1px solid var(--line)}
+.chat-bd{padding:20px;display:flex;flex-direction:column;gap:12px;min-height:380px}
+.msg{max-width:82%;padding:11px 15px;border-radius:14px;font-size:14px;line-height:1.5;opacity:0;transform:translateY(8px);animation:msgin .45s forwards}
+@keyframes msgin{to{opacity:1;transform:none}}
+.msg.u{align-self:flex-end;background:#24344d;border-bottom-right-radius:4px}
+.msg.a{align-self:flex-start;background:var(--card2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg.sys{align-self:center;background:rgba(47,208,140,.1);border:1px solid rgba(47,208,140,.3);color:var(--grn);font-size:13px;text-align:center;max-width:92%}
+.msg .who{display:block;font-size:11px;color:var(--dim);margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
+.msg.a .who{color:var(--acc)}
+.chat-replay{margin-top:14px;text-align:center}
+.btn{display:inline-block;background:var(--grad);color:#fff;border:none;padding:12px 26px;border-radius:11px;font-weight:600;font-size:15px;cursor:pointer;transition:.2s;text-align:center}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--mut)}
+.btn.ghost:hover{color:var(--txt);border-color:var(--acc)}
+
+.calc{display:grid;grid-template-columns:1.15fr .85fr;gap:24px}
+@media(max-width:900px){.calc{grid-template-columns:1fr}}
+.cpanel{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:28px}
+.crow{margin-bottom:22px}
+.crow label{display:flex;justify-content:space-between;font-size:14px;color:var(--mut);margin-bottom:8px}
+.crow label b{color:var(--txt);font-size:15px;white-space:nowrap}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--line);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--acc);cursor:pointer;border:3px solid rgba(255,255,255,.2);box-shadow:0 0 0 2px var(--acc)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--acc);cursor:pointer;border:none}
+.results{background:linear-gradient(160deg,#1a2638,#141d2c);border:1px solid var(--line);border-radius:var(--rad);padding:28px}
+@media(min-width:901px){.results{position:sticky;top:84px}}
+.rline{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px;gap:10px}
+.rline .rv{font-weight:700;font-size:17px;white-space:nowrap}
+.rline.loss .rv{color:var(--red)}
+.rline.sol .rv{color:var(--blu)}
+.rline.gain .rv{color:var(--grn)}
+.rbig{margin-top:18px;text-align:center;background:rgba(255,138,30,.08);border:1px solid rgba(255,138,30,.3);border-radius:14px;padding:20px}
+.rbig .cap{color:var(--mut);font-size:13px}
+.rbig .val{font-size:clamp(30px,4vw,42px);font-weight:800;color:var(--acc2)}
+.rbig .sub2{color:var(--mut);font-size:13px;margin-top:4px}
+.note{font-size:12.5px;color:var(--dim);margin-top:14px}
+
+.models{max-width:900px;margin:26px auto 0}
+
+.scn{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:26px;border-top:4px solid var(--dim)}
+.scn.a{border-top-color:var(--red)}
+.scn.b{border-top-color:var(--blu)}
+.scn.v{border-top-color:var(--grn);background:linear-gradient(170deg,#16233a,#141d2c)}
+.scn h3{font-size:17px;margin-bottom:4px}
+.scn .prob{font-size:12px;color:var(--dim);margin-bottom:12px}
+.scn ul{margin:0 0 0 18px;color:var(--mut);font-size:14px}
+.scn ul li{margin-bottom:7px}
+.scn .sum{margin-top:14px;font-weight:700;font-size:15px}
+.scn.a .sum{color:var(--red)} .scn.b .sum{color:var(--blu)} .scn.v .sum{color:var(--grn)}
+
+.price-hero{background:linear-gradient(160deg,#1c2940,#141d2c);border:1px solid rgba(255,138,30,.35);border-radius:var(--rad);padding:34px;display:grid;grid-template-columns:1.2fr .8fr;gap:26px}
+@media(max-width:800px){.price-hero{grid-template-columns:1fr}}
+.pbig{font-size:clamp(34px,4.5vw,48px);font-weight:800}
+.plist{margin:14px 0 0 18px;color:var(--mut);font-size:14.5px}
+.plist li{margin-bottom:8px}
+.plist li b{color:var(--txt)}
+.bonus{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap}
+.bonus div{background:rgba(47,208,140,.1);border:1px solid rgba(47,208,140,.3);border-radius:11px;padding:10px 16px;font-size:13px;color:var(--grn)}
+
+.tl{position:relative;margin-top:8px}
+.tl:before{content:"";position:absolute;left:19px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tstep{position:relative;padding:0 0 26px 56px}
+.tstep .dot{position:absolute;left:8px;top:2px;width:24px;height:24px;border-radius:50%;background:var(--card2);border:2px solid var(--acc);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--acc)}
+.tstep h3{font-size:16px}
+.tstep .d{font-size:12px;color:var(--acc);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.tstep p{color:var(--mut);font-size:14px}
+
+.stake{border-left:3px solid var(--acc);background:var(--card);border-radius:0 var(--rad) var(--rad) 0;padding:22px 24px}
+.stake h3{font-size:16px;margin-bottom:8px}
+.stake ul{margin-left:18px;color:var(--mut);font-size:14px}
+.stake ul li{margin-bottom:6px}
+
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:12px}
+details summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none}
+details summary:before{content:"+";color:var(--acc);margin-right:10px;font-weight:800}
+details[open] summary:before{content:"\2013"}
+details p{color:var(--mut);font-size:14px;margin-top:10px}
+
+.expect{background:rgba(77,163,255,.06);border:1px solid rgba(77,163,255,.25);border-radius:var(--rad);padding:28px}
+.expect h3{color:var(--blu);margin-bottom:14px}
+.expect ul{margin-left:20px;color:var(--mut);font-size:14.5px}
+.expect ul li{margin-bottom:9px}
+
+footer{background:#090d13;padding:52px 0 34px;font-size:13.5px;color:var(--mut)}
+.fgrid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:30px;margin-bottom:30px}
+@media(max-width:800px){.fgrid{grid-template-columns:1fr}}
+footer h4{color:var(--txt);font-size:14px;margin-bottom:12px}
+footer .disc{border-top:1px solid var(--line);padding-top:22px;font-size:12px;color:var(--dim);line-height:1.7}
+.slogan{margin:6px 0 14px;font-size:15px;color:var(--acc2);font-weight:600}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card2);border:1px solid var(--acc);color:var(--txt);padding:12px 22px;border-radius:12px;font-size:14px;opacity:0;transition:.35s;z-index:99;max-width:90%;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hd">
+    <div class="logo">
+      <div class="mark">Ю</div>
+      <div>ЮгСпецСети
+        <small>Агентство автоматизации бизнес-процессов · AI-Интеграция</small>
+      </div>
+    </div>
+    <nav>
+      <a href="#problem">Диагностика</a>
+      <a href="#arch">Решение</a>
+      <a href="#demo">Демо-диалог</a>
+      <a href="#calc">ROI-калькулятор</a>
+      <a href="#plan">План</a>
+      <a href="#pricing">Условия</a>
+    </nav>
+    <a href="#cta" class="hd-cta">Обсудить проект</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="tag">Персональный проект · подготовлен для ООО «РусПром»</div>
+    <h1>Два цифровых агента, которые закроют <span>первую линию РусПрома 24/7</span> — от квалификации до подбора запчасти</h1>
+    <p class="pers">Ярослав, этот материал собран по результатам вашей заявки от 07.08.2026 и аудита meyer-corp.ru — под ваши цифры, ваше оборудование и вашу связку артикулов в 1С. Удобно проходить вместе на созвоне, затем переслать команде для согласования.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="v">25 / день</div><div class="l">обращений по запчастям, расходникам и настройке</div></div>
+      <div class="stat"><div class="v">270–410 ч</div><div class="l">менеджерского времени в месяц на первичной обработке</div></div>
+      <div class="stat"><div class="v">135–205 тыс. ₽</div><div class="l">оценка ежемесячных потерь на рутине отдела продаж</div></div>
+      <div class="stat"><div class="v">15–30 сек</div><div class="l">время отклика агента: клиент успевает дописать мысль и получает один связный ответ</div></div>
+    </div>
+  </div>
+</div>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="tag">Диагностика</div>
+    <h2>Что происходит с заявками сегодня</h2>
+    <p class="sub">По вашим данным из первичного разговора. Если цифра отличается — поправьте её в калькуляторе ниже, модель пересчитается.</p>
+    <div class="grid3">
+      <div class="card"><div class="icn">⏱️</div><h3>15 минут — 1 сутки</h3><p>Разброс времени ответа: помощь с настройкой — быстро, подбор запчастей — до суток. Клиент, которому нужен расходник, не ждёт сутки — он звонит тому, кто отвечает за 5 минут.</p></div>
+      <div class="card"><div class="icn">🌏</div><h3>Федеральный клиент vs один офис</h3><p>Продажи по всей России, офис в Барнауле (UTC+7). Пока европейская часть страны дожидается ответа — заявки уходят в «завтра», а «завтра» — к конкуренту.</p></div>
+      <div class="card"><div class="icn">🧩</div><h3>Главный актив уже есть</h3><p>В 1С настроено соответствие «артикул запчасти ↔ модель компрессора», есть прайс и история продаж. Это готовая база для агента — запуск в разы быстрее, чем «с нуля».</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="arch">
+  <div class="wrap">
+    <div class="tag">Архитектура решения</div>
+    <h2>Как работают два агента</h2>
+    <p class="sub">Не один «универсальный бот», а два узких специалиста — так точность выше: по нашему опыту, узкий агент держит 90–95% корректных ответов против 70–85% у «мастера на всё».</p>
+
+    <div class="flow">
+      <div class="fnode">
+        <div class="role">Вход · любой канал · 24/7</div>
+        <b>Обращение клиента:</b> мессенджер, сайт, почта — в любое время суток, из любого часового пояса
+      </div>
+      <div class="farrow"></div>
+      <div class="fnode" style="border-color:var(--acc)">
+        <div class="role">Квалификатор · первый контакт</div>
+        <b>Определяет тип задачи</b> и задаёт уточняющие вопросы: модель, серийный номер, регион, срочность. Дальше — одна из трёх дорог:
+        <ul>
+          <li>🏭 <b>Продажа оборудования</b> — продолжает сам → саммари менеджеру по продажам</li>
+          <li>🔩 <b>Запчасти / настройка / неисправность</b> — передаёт Техподдержке с контекстом</li>
+          <li>🚨 <b>Нестандартная ситуация</b> — эскалация старшему менеджеру</li>
+        </ul>
+      </div>
+      <div class="farrow"></div>
+      <div class="branch">
+        <div class="bnode">
+          <span class="pill b">Ветка «Оборудование» · Квалификатор</span>
+          <ul>
+            <li>Подбор по задаче клиента (культура, производительность, бюджет)</li>
+            <li>Лизинг и наличие — по регламенту ответа</li>
+            <li><b>Саммари продажи → менеджеру по продажам</b> в CRM: модель, потребность, регион, срок</li>
+            <li>Перспектива (этапы 3–5): автогенерация КП под клиента по контексту диалога</li>
+          </ul>
+        </div>
+        <div class="bnode orange">
+          <span class="pill o">Ветка «Запчасти» · Техподдержка</span>
+          <ul>
+            <li>Принимает диалог <b>с полным контекстом квалификации</b></li>
+            <li>Подбор по связке «артикул ↔ модель компрессора» из 1С</li>
+            <li>Ответы по расходникам и настройке — сразу</li>
+            <li><b>Продажа запчастей → менеджеру по продажам</b> в CRM</li>
+            <li>FAQ — закрывает сам; сложное — эскалация</li>
+          </ul>
+        </div>
+      </div>
+      <div class="farrow"></div>
+      <div class="fnode">
+        <div class="role">Эскалация · отдельная ветка</div>
+        <b>Если агенты не решили задачу или случай экстраординарный</b> — диалог с полной сводкой уходит <b>старшему менеджеру</b>. Агент не «додумывает»: по неисправностям консультирует только после сборки базы знаний с вашим техспецом.
+        <p class="note2">Куда идёт клиент после квалификации — зависит от вашего стека: <b>1С Склад</b> (учёт и остатки; оборудование и запчасти могут быть в одной базе) + <b>CRM</b> (работа с клиентами). Если CRM и 1С уже сопряжены, возможен вариант подключения через CRM как канал к данным 1С — точную схему определим с вашим IT-специалистом на аудите. Интеграция 1С — 11 000 ₽ разово; вторая CRM — по модулю CRM-ИНТЕГРАЦИЯ+ (если не Битрикс24/amoCRM).</p>
+      </div>
+    </div>
+
+    <div class="grid4" style="margin-top:34px">
+      <div class="card"><h3 style="color:var(--acc2)">15–30 сек</h3><p>рекомендуемый отклик: клиент успевает дописать мысль, агент отвечает одним связным сообщением</p></div>
+      <div class="card"><h3 style="color:var(--acc2)">60–80%</h3><p>типовых обращений закрывается без менеджера (цель к 3-му месяцу)</p></div>
+      <div class="card"><h3 style="color:var(--acc2)">24/7</h3><p>все часовые пояса РФ — без ночных дежурных</p></div>
+      <div class="card"><h3 style="color:var(--acc2)">100%</h3><p>нестандартных случаев — эскалация с полной сводкой</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="equip">
+  <div class="wrap">
+    <div class="tag">Мы изучили вашу номенклатуру</div>
+    <h2>Решение спроектировано под линейку MEYER</h2>
+    <p class="sub">Агенты обучаются на вашем каталоге: фотосепараторы, компрессорная обвязка и дополнительное оборудование — с типовыми параметрами и сценариями подбора.</p>
+    <div class="grid3">
+      <div class="card"><div class="icn">🌾</div><h3>Фотосепараторы</h3><p>Серии CG (120–780), CG.A, K/KS, KC, KI, KE, KP, 120M2, XS, XM, DREAM, CI — для зерна, семян, орехов, специй, пластика и минералов.</p></div>
+      <div class="card"><div class="icn">🌀</div><h3>Компрессорное оборудование</h3><p>Обвязка фотосепараторов: рабочее давление пневмоклапанов 0,6–0,8 МПа — типовая точка вопросов клиентов по расходникам и настройке.</p></div>
+      <div class="card"><div class="icn">🔧</div><h3>Доп. оборудование</h3><p>Транспортёры, площадки, бункеры, сходы, аспирация — кросс-продажи, которые агент предлагает по регламенту в каждом релевантном диалоге.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <div class="tag">Демо-диалог</div>
+    <h2>Так выглядит обращение внутри системы</h2>
+    <p class="sub">Условный пример на реальной номенклатуре: клиенту ночью нужны клапаны на MEYER 360CG. Нажмите «Запустить диалог».</p>
+    <div class="chat">
+      <div class="chat-hd"><span>Telegram · 23:47 (МСК) · клиент из Москвы, офис в Барнауле закрыт</span><span>🟢 агенты на линии</span></div>
+      <div class="chat-bd" id="chatBody"></div>
+    </div>
+    <div class="chat-replay"><button class="btn" id="chatBtn">▶ Запустить диалог</button></div>
+  </div>
+</section>
+
+<section id="calc">
+  <div class="wrap">
+    <div class="tag">ROI-калькулятор · модель под РусПром</div>
+    <h2>Посчитайте сами — каждую цифру видно</h2>
+    <p class="sub">Двигайте ползунки: модель мгновенно пересчитает потери, стоимость решения и окупаемость контракта. Значения по умолчанию — из вашей заявки.</p>
+    <div class="calc">
+      <div class="cpanel">
+        <div class="crow"><label>Обращений в день <b><span id="vLeads">25</span></b></label><input type="range" id="leads" min="5" max="100" value="25"></div>
+        <div class="crow"><label>Часов менеджеров на первичку в день <b><span id="vHours">14</span> ч</b></label><input type="range" id="hours" min="2" max="25" value="14"></div>
+        <div class="crow"><label>Полная стоимость часа менеджера <b><span id="vRate">500</span> ₽</b></label><input type="range" id="rate" min="200" max="1500" step="50" value="500"></div>
+        <div class="crow"><label>Потерянные заявки в месяц (ночь, задержки) <b><span id="vLost">40</span></b></label><input type="range" id="lost" min="0" max="200" value="40"></div>
+        <div class="crow"><label>Средний чек запчастей/расходников <b><span id="vCheck">15 000</span> ₽</b></label><input type="range" id="check" min="2000" max="100000" step="1000" value="15000"></div>
+        <div class="crow"><label>Маржа по запчастям <b><span id="vMargin">30</span>%</b></label><input type="range" id="margin" min="5" max="70" value="30"></div>
+        <div class="crow"><label>Доля обращений, закрываемых агентами <b><span id="vCap">65</span>%</b></label><input type="range" id="cap" min="30" max="90" value="65"></div>
+        <div class="crow"><label>Глубина диалога (ответов ИИ) <b><span id="vDepth">8</span></b></label><input type="range" id="depth" min="3" max="20" value="8"></div>
+        <div class="crow" style="margin-bottom:0"><label>Стоимость одного ответа ИИ <b><span id="vPrice">5</span> ₽</b></label><input type="range" id="aprice" min="1" max="25" value="5"></div>
+        <p class="note">Архитектура проекта (двухстадийный диалог + поиск по базе вместо полной номенклатуры) нацелена держать глубину 5–8 ответов — это прямо влияет на ежемесячный расход.</p>
+      </div>
+      <div class="results">
+        <div class="rline loss"><span>Потери на рутине / мес</span><span class="rv" id="rLabor">—</span></div>
+        <div class="rline loss"><span>Упущенная прибыль (продажи) / мес</span><span class="rv" id="rSales">—</span></div>
+        <div class="rline loss"><span><b>Итого теряется / мес</b></span><span class="rv" id="rLoss">—</span></div>
+        <div class="rline sol"><span>Аренда КОМФОРТ (2 агента, вкл. 10 000 ₽ токенов)</span><span class="rv">42 000 ₽</span></div>
+        <div class="rline sol"><span>Доплата за токены сверх базы / мес</span><span class="rv" id="rTok">—</span></div>
+        <div class="rline sol"><span><b>Стоимость решения / мес</b></span><span class="rv" id="rSol">—</span></div>
+        <div class="rline gain"><span>Возвращаем агентами / мес</span><span class="rv" id="rRec">—</span></div>
+        <div class="rline gain"><span><b>Чистый выигрыш / мес</b></span><span class="rv" id="rNet">—</span></div>
+        <div class="rbig">
+          <div class="cap">Окупаемость контракта (6 мес, 226 800 ₽ + 11 000 ₽ за 1С)</div>
+          <div class="val" id="rPay">—</div>
+          <div class="sub2" id="rRoi">—</div>
+        </div>
+        <div style="margin-top:16px;text-align:center">
+          <button class="btn" id="copyBtn">📋 Скопировать расчёт для ТЗ</button>
+          <p class="note">Кнопка копирует параметры, итоги и контекст проекта в буфер обмена — в формате, готовом для технического задания. Отправьте расчёт интегратору: это ориентировочные KPI проекта.</p>
+        </div>
+        <p class="note">Расчёт ориентировочный, результаты индивидуальны и зависят от полноты исходных данных и участия вашей команды в настройке (38-ФЗ). Точную модель зафиксируем в техзадании после аудита.</p>
+      </div>
+    </div>
+
+    <div class="models card">
+      <h3>Коэффициенты стоимости моделей на платформе</h3>
+      <p class="note">База ×1 — GPT-5.1 (по умолчанию). На стоимость ответа влияет объём контекста в каждом запросе: если 1С отдаёт большой массив данных, токенов расходуется больше — поэтому в проекте заложена двухстадийная подача контекста.</p>
+      <div class="grid3" style="margin-top:14px">
+        <div>
+          <p style="color:var(--mut);font-size:13.5px"><b style="color:var(--txt)">OpenAI</b><br>
+          GPT-5.6 Sol — ×4<br>GPT-5.5 — ×4<br>GPT-5.4 — ×2<br>GPT-5.6 Terra — ×1.6<br>GPT-5.3 / 5.2 — ×1.4<br>GPT-5.6 Luna — ×1.2<br>GPT-5.4 Mini — ×0.6</p>
+        </div>
+        <div>
+          <p style="color:var(--mut);font-size:13.5px"><b style="color:var(--txt)">Anthropic / Google</b><br>
+          Claude Sonnet 5 — ×2.4<br>Claude Sonnet 4.6 — ×2.4<br>Gemini 3.5 Flash — ×1.2</p>
+        </div>
+        <div>
+          <p style="color:var(--mut);font-size:13.5px"><b style="color:var(--txt)">Экономичные (в проекте)</b><br>
+          Qwen3.7 Plus — ×0.26<br>DeepSeek V4 Pro — ×0.6<br>DeepSeek V4 Flash — ×0.11</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="scen">
+  <div class="wrap">
+    <div class="tag">Три сценария на 12 месяцев</div>
+    <h2>Честная вилка вариантов</h2>
+    <div class="grid3">
+      <div class="scn a"><h3>А · Статус-кво</h3><div class="prob">Ничего не меняем</div>
+        <ul><li>1,6–2,5 млн ₽/год — первичная обработка вручную</li><li>Ночные заявки продолжают уходить без ответа</li><li>Рост потока = найм: +100–160 тыс. ₽/мес с налогами, без решения проблемы 24/7</li></ul>
+        <div class="sum">Вероятность: высокая</div></div>
+      <div class="scn b"><h3>Б · Только квалификатор</h3><div class="prob">Частичная автоматизация</div>
+        <ul><li>Квалификация закрыта, скорость первого ответа выросла</li><li>Но запчасти — повторный маржинальный поток — по-прежнему ждут менеджера до суток</li><li>Экономия частичная, главные потери остаются</li></ul>
+        <div class="sum">Вероятность: средняя</div></div>
+      <div class="scn v"><h3>В · Два агента</h3><div class="prob">Полная первая линия</div>
+        <ul><li>Квалификация + подбор запчастей 24/7, ответ за 15–30 секунд</li><li>50 750–88 250 ₽/мес против 135–205 тыс. ₽ потерь + возврат ночных продаж</li><li>Менеджеры занимаются сложными сделками и сервисом</li></ul>
+        <div class="sum">Рекомендуемый сценарий</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="plan">
+  <div class="wrap">
+    <div class="tag">План внедрения · 30 дней</div>
+    <h2>От договора до работающих агентов</h2>
+    <div class="grid2" style="align-items:start">
+      <div class="tl">
+        <div class="tstep"><div class="dot">1</div><div class="d">Дни 1–7</div><h3>Аудит и техзадание</h3><p>Аудит процессов и топ-вопросов (бонус), разработка ТЗ (бонус), выгрузки 1С, сценарии эскалации. Выход: утверждённое ТЗ.</p></div>
+        <div class="tstep"><div class="dot">2</div><div class="d">Дни 8–14</div><h3>Разработка двух агентов</h3><p>Базы знаний, связка «артикул ↔ модель», маршрутизация веток, интеграция каналов. Выход: тестовый контур.</p></div>
+        <div class="tstep"><div class="dot">3</div><div class="d">Дни 15–21</div><h3>Внутренние тесты</h3><p>Прогон на исторических обращениях, калибровка точности вместе с вашей командой. В бой выходит только проверенная конфигурация. Выход: точность подбора ≥ 90% на тесте.</p></div>
+        <div class="tstep"><div class="dot">4</div><div class="d">Дни 22–30</div><h3>Первый канал под контролем</h3><p>Подключаем один канал на реальных клиентах под жёстким контролем: уведомление на каждый диалог, партнёрский кабинет, обучение команды. Выход: первые метрики.</p></div>
+        <div class="tstep"><div class="dot">5</div><div class="d">Месяцы 2–3</div><h3>Все каналы и автопилот</h3><p>Подключение остальных каналов, регулярные правки инструкций, тест моделей по цене и качеству. Ориентировочно к 3-му месяцу — режим автопилота с периодическими ревизиями.</p></div>
+        <div class="tstep"><div class="dot">+</div><div class="d">Этапы 3–5 · опционально</div><h3>Расширение</h3><p>Автогенерация КП по оборудованию на основе контекста диалога, онлайн-остатки и цены из 1С, аналитика по воронке обращений.</p></div>
+      </div>
+      <div>
+        <div class="expect">
+          <h3>📋 Реалистичные ожидания — важно</h3>
+          <ul>
+            <li><b>Период адаптации:</b> 1–2 недели — базовая настройка, 1–2 месяца — целевое качество, 2–3 месяца — уровень опытного сотрудника.</li>
+            <li><b>Качество зависит от данных:</b> связка артикулов у вас сильная; база знаний по неисправностям собирается с вашим техспецом — до её проверки агент по неисправностям не консультирует.</li>
+            <li><b>Участие команды критично:</b> первый месяц — ежедневная обратная связь по качеству ответов.</li>
+            <li><b>Сроки сдвигаются</b>, если необходимый контекст (регламенты, прайсы, выгрузки, обратная связь тестировщиков) поступает с задержкой.</li>
+            <li><b>Честная цена:</b> разработка амортизирована на 12 месяцев — первые 6 месяцев мы работаем в ноль. Поэтому контракт от 6 месяцев, а вход — только первый месяц.</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:18px"><h3>🛡 Гарантии</h3><p>30 дней на соответствие техзаданию · доступность сервиса ≥ 99,5% · при блокировке зарубежных моделей — замена на доступную модель без изменения стоимости · соответствие 152-ФЗ.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="stake">
+  <div class="wrap">
+    <div class="tag">Для согласования внутри команды</div>
+    <h2>Аргументы под каждого участника решения</h2>
+    <div class="grid3">
+      <div class="stake"><h3>💼 Собственнику / финансовому директору</h3><ul><li>Вход — 53 000 ₽, а не вся сумма проекта сразу</li><li>Окупаемость контракта — калькулятор выше, каждую цифру можно проверить</li><li>Скидка 10% при оплате 6 месяцев: 252 000 → 226 800 ₽</li><li>Потери от бездействия повторяются каждый месяц</li></ul></div>
+      <div class="stake"><h3>🔩 Техническому директору</h3><ul><li>Агент не «фантазирует»: работает только с проверенной базой; запуск поэтапно — внутренние тесты → один канал → все каналы</li><li>БЗ по неисправностям — структура «симптом → причины → безопасные действия → эскалация», собирается с вашим специалистом</li><li>Эскалация 100% нестандартных случаев с полной сводкой</li><li>Партнёрский кабинет: все диалоги видны, агента можно поставить на паузу и перехватить диалог</li></ul></div>
+      <div class="stake"><h3>🗄 Специалисту по 1С</h3><ul><li>Интеграция — разовый проект за 11 000 ₽, без перестройки учёта</li><li>Старт — на регламентных выгрузках (прайс, соответствие артикулов, история продаж)</li><li>Важно заранее оценить реальный объём данных, передаваемых по API: он напрямую влияет на расход токенов и цену обработки</li><li>Глубокая связка (остатки, цены онлайн) — отдельной фазой по готовности</li><li>Вторая CRM (квалификация, эскалация, продажа оборудования, сервис) — через CRM-ИНТЕГРАЦИЯ+</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="tag">Условия проекта</div>
+    <h2>Прозрачная структура цены</h2>
+    <div class="price-hero">
+      <div>
+        <div style="color:var(--mut);font-size:14px">Тариф КОМФОРТ · два агента · контракт от 6 месяцев</div>
+        <div class="pbig">42 000 ₽<span style="font-size:18px;color:var(--mut);font-weight:400"> /мес</span></div>
+        <ul class="plist">
+          <li>Внутри — <b>10 000 ₽/мес на токены</b>; сверх — по факту (прогноз в калькуляторе)</li>
+          <li>Интеграция 1С — <b>11 000 ₽ разово</b></li>
+          <li>Вход в проект: <b>первый месяц + интеграция = 53 000 ₽</b></li>
+          <li>Оплата 6 месяцев разом: <b>226 800 ₽</b> вместо 252 000 ₽ (−10%)</li>
+          <li>Аренда — использование с ограничением прав: логика агентов и воркфлоу остаются собственностью агентства</li>
+          <li>Возможна <b>разработка под ключ</b> с передачей административного кабинета, всей логики агентов и воркфлоу — условия обсудим на встрече</li>
+          <li>Гарантия: 30 дней на соответствие ТЗ</li>
+        </ul>
+      </div>
+      <div>
+        <div class="bonus">
+          <div>🎁 Экспресс-аудит ИИ — проведён бесплатно (4 500 ₽)</div>
+          <div>🎁 Разработка техзадания — бонус (4 500 ₽)</div>
+        </div>
+        <div class="card" style="margin-top:18px;background:rgba(255,138,30,.06)"><h3 style="color:var(--acc2)">Почему минимум 6 месяцев — честно</h3><p>Стоимость разработки мы разбиваем на 12 месяцев. За полгода выходим в ноль: не зарабатываем, но и не теряем. Вы платите за труд и результат, а не за наценку.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="tag">FAQ</div>
+    <h2>Вопросы, которые обычно звучат дальше</h2>
+    <details><summary>А если агент ответит клиенту неправильно — по цене или неисправности?</summary><p>Контроль многоуровневый. На этапе разработки агенты проходят внутренние тесты на ваших исторических диалогах — в бой выходит только проверенная конфигурация. Через пару недель после старта работ подключаем один канал под жёстким контролем: уведомление на каждый новый диалог, партнёрский кабинет со всей перепиской, возможность поставить агента на паузу и перехватить диалог в любой момент. Первые два месяца — регулярные правки инструкций бота и тестирование моделей ИИ по цене и качеству ответов. Затем подключаем все каналы, и ориентировочно через три месяца выходим в режим автопилота.</p></details>
+    <details><summary>У нас нет базы знаний по типовым неисправностям. Это блокер?</summary><p>Нет. Запускаемся на том, что есть: прайс, связка артикулов, история продаж. Базу по неисправностям собираем в проекте: 2–3 интервью с вашим специалистом → структура «симптом → причины → безопасные действия клиента → точка эскалации». До этого агент по неисправностям квалифицирует и передаёт человеку.</p></details>
+    <details><summary>Сколько реально будут стоить токены при нашей номенклатуре?</summary><p>Зависит от глубины диалога, цены ответа и <b>объёма контекста в каждом запросе</b>: если 1С будет отдавать большой массив данных, это потребляет больше токенов. Именно поэтому в архитектуре — двухстадийная подача контекста: сначала дешёвая квалификация, затем подгрузка только релевантного среза номенклатуры. Поиграйте ползунками в калькуляторе — видно, как меняется расход. Первый месяц покажет фактическую цифру.</p></details>
+    <details><summary>Что с персональными данными клиентов?</summary><p>Обработка — по 152-ФЗ, данные на территории РФ, согласия фиксируются. После передачи решения ответственность за эксплуатацию в части 152-ФЗ переходит к заказчику — это стандартное условие договора.</p></details>
+    <details><summary>А если зарубежные ИИ-сервисы заблокируют?</summary><p>Предусмотрено договором: меняем на доступную модель или переходим на российские (YandexGPT, GigaChat). Честно предупреждаем: российские модели сейчас заметно слабее по качеству и дороже — суммарно на порядок менее эффективны. Поэтому в архитектуре сразу закладываем возможность быстрой смены модели без перестройки системы.</p></details>
+  </div>
+</section>
+
+<section id="cta" style="border-bottom:none">
+  <div class="wrap" style="text-align:center">
+    <div class="tag">Следующий шаг</div>
+    <h2>Готовы к разработке технического задания?</h2>
+    <p class="sub" style="margin:0 auto 24px">Скопируйте расчёт калькулятора как желаемое KPI и пришлите в чат нашему аудитору Александру вместе с данными, которые включим в разработку: регламенты, прайсы, скрипты продаж, FAQ, номенклатуру, ваш стек CRM и 1С.</p>
+    <a class="btn" href="https://max.ru/id910614084910_bot" target="_blank" rel="noopener">Написать в MAX</a>
+    <a class="btn" href="https://telegram.me/southspecialnetwork_bot" target="_blank" rel="noopener" style="margin-left:10px">Написать в Телеграм</a>
+    <div style="margin-top:14px"><a class="btn ghost" href="tel:+79789419359">📞 +7 978 941-93-59</a></div>
+    <p class="note" style="margin-top:20px">Андрей Савченко · ЮгСпецСети | AI-Интеграция · ПН–ПТ, 9:00–18:00 МСК</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <h4>ЮгСпецСети | AI-Интеграция</h4>
+        <p>Агентство автоматизации бизнес-процессов<br>ИП Савченко Андрей Олегович<br>ИНН: 910614084910 · ОКВЭД: 62.01 — разработка программного обеспечения</p>
+      </div>
+      <div>
+        <h4>Контакты</h4>
+        <p>📱 <a href="tel:+79789419359">+7 978 941-93-59</a><br>💬 <a href="https://max.ru/id910614084910_bot" target="_blank" rel="noopener">MAX: id910614084910_bot</a><br>✈️ <a href="https://telegram.me/southspecialnetwork_bot" target="_blank" rel="noopener">Telegram-бот</a><br>🌐 <a href="https://югспецсети.рф">югспецсети.рф</a> · <a href="https://vk.com/southspecialnetwork">ВКонтакте</a></p>
+      </div>
+      <div>
+        <h4>Документы</h4>
+        <p><a href="https://югспецсети.рф/reglament">Регламент предоставления услуг (оферта)</a><br><a href="https://югспецсети.рф/152">Политика обработки персональных данных</a><br>Оператор ПД № 37410/91</p>
+      </div>
+    </div>
+    <div class="disc">
+      <div class="slogan">Мы не продаём технологии — мы разрабатываем решения под ваш бизнес.</div>
+      Материал подготовлен персонально для ООО «РусПром» на основе данных первичной заявки (07.08.2026) и публичной информации meyer-corp.ru. Не является публичной офертой: итоговая конфигурация и стоимость определяются техническим заданием после аудита и могут отличаться в диапазоне ±30%. Результаты внедрения индивидуальны и зависят от полноты исходных данных и участия заказчика в настройке. ИИ-ассистенты требуют периода адаптации 30–90 дней; заявленные показатели достигаются при активном сотрудничестве в процессе настройки. Применимое право: ГК РФ, 152-ФЗ, 38-ФЗ «О рекламе», Постановление Правительства РФ № 2463.<br><br>© ЮгСпецСети | AI-Интеграция, 2026
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Расчёт обновлён</div>
+
+<script>
+var dialog=[
+ {t:'u',who:'Клиент · 23:47',txt:'Добрый вечер! У нас встал сепаратор MEYER 360CG — нужны клапаны соленоидные, подскажете по наличию? Горим, линия стоит.'},
+ {t:'a',who:'Квалификатор',txt:'Добрый вечер! Принял, помогу. Уточню пару моментов: подскажите серийный номер машины или год выпуска? И город — чтобы сразу оценить доставку.'},
+ {t:'u',who:'Клиент',txt:'Москва. С/н могу скинуть фото шильдика'},
+ {t:'sys',txt:'⚡ Ветка определена: ЗАПЧАСТИ → диалог передаётся Техподдержке с контекстом (MEYER 360CG, Москва, срочно)'},
+ {t:'a',who:'Техподдержка',txt:'Принял! Для 360CG клапанная группа идёт по артикулу, привязанному к модели в 1С. Рабочее давление вашей серии 0,6–0,8 МПа — подходят две позиции. Проверяю наличие и цену по данным 1С — отвечу через минуту, даже ночью.'},
+ {t:'sys',txt:'📋 Саммари в CRM менеджеру по продажам: модель 360CG · клапан соленоидный (артикул по связке 1С) · Москва · срочность высокая'},
+ {t:'a',who:'Техподдержка',txt:'Готово. Артикул, наличие на складе, стоимость и варианты доставки в Москву — отправил здесь и продублировал на почту. Заявка зафиксирована в CRM; завтра в 9:00 по вашему времени свяжется инженер, если понадобится помощь с заменой. Что-то ещё подсказать?'}
+];
+var chatBody=document.getElementById('chatBody'),chatBtn=document.getElementById('chatBtn');
+var playing=false;
+function playChat(){
+ if(playing)return;playing=true;chatBody.innerHTML='';chatBtn.textContent='▶ Идёт диалог…';
+ dialog.forEach(function(m,i){
+   setTimeout(function(){
+     var d=document.createElement('div');
+     d.className='msg '+m.t;
+     d.innerHTML=(m.who?'<span class="who">'+m.who+'</span>':'')+m.txt;
+     chatBody.appendChild(d);
+     if(i===dialog.length-1){playing=false;chatBtn.textContent='↺ Повторить диалог';}
+   },i*1400);
+ });
+}
+chatBtn.addEventListener('click',playChat);
+
+function $(id){return document.getElementById(id);}
+function fmt(n){return Math.round(n).toLocaleString('ru-RU')+' ₽';}
+var ids=['leads','hours','rate','lost','check','margin','cap','depth','aprice'];
+function calc(){
+ var leads=+$('leads').value, hours=+$('hours').value, rate=+$('rate').value,
+     lost=+$('lost').value, check=+$('check').value, margin=+$('margin').value,
+     cap=+$('cap').value, depth=+$('depth').value, price=+$('aprice').value;
+ $('vLeads').textContent=leads; $('vHours').textContent=hours; $('vRate').textContent=rate.toLocaleString('ru-RU');
+ $('vLost').textContent=lost; $('vCheck').textContent=check.toLocaleString('ru-RU');
+ $('vMargin').textContent=margin; $('vCap').textContent=cap; $('vDepth').textContent=depth; $('vPrice').textContent=price;
+
+ var laborLoss=hours*30*rate;
+ var salesLoss=lost*check*margin/100;
+ var totalLoss=laborLoss+salesLoss;
+ var recovered=totalLoss*cap/100;
+
+ var answers=leads*30*depth;
+ var tokenCost=answers*price;
+ var overage=Math.max(0,tokenCost-10000);
+ var solution=42000+overage;
+
+ var net=recovered-solution;
+ var contract=226800+11000+overage*6;
+ var payback=recovered>0?(contract/recovered):Infinity;
+ var roi6=contract>0?((recovered*6-contract)/contract*100):0;
+
+ $('rLabor').textContent=fmt(laborLoss);
+ $('rSales').textContent=fmt(salesLoss);
+ $('rLoss').textContent=fmt(totalLoss);
+ $('rTok').textContent=overage>0?fmt(overage):'0 ₽ (в базе)';
+ $('rSol').textContent=fmt(solution);
+ $('rRec').textContent=fmt(recovered);
+ $('rNet').textContent=(net>=0?'+':'−')+fmt(Math.abs(net));
+ $('rNet').style.color=net>=0?'#2fd08c':'#ff5d5d';
+ if(!isFinite(payback)){$('rPay').textContent='—';}
+ else if(payback<0.4){$('rPay').textContent='менее 2 недель';}
+ else{$('rPay').textContent=payback.toFixed(1).replace('.',',')+' мес';}
+ $('rRoi').textContent='ROI за 6 месяцев: '+(roi6>0?'+':'')+Math.round(roi6)+'% · чистыми ≈ '+fmt(recovered*6-contract);
+}
+ids.forEach(function(id){$(id).addEventListener('input',function(){calc();showToast('Расчёт обновлён');});});
+
+function kpiText(){
+ var v=function(id){return $(id).textContent;};
+ return 'ПРОСЬБА ПЕРЕДАТЬ РУКОВОДИТЕЛЮ\n'+
+ '────────────────────────────────\n'+
+ 'КОНТЕКСТ ПРОЕКТА (для аудитора Александра):\n'+
+ 'Компания: ООО «РусПром» (офис продаж — Барнаул, работа по всей РФ) — продажа и обслуживание промышленного компрессорного оборудования и фотосепараторов MEYER.\n'+
+ 'Задача: разработка двух ИИ-агентов первой линии 24/7.\n'+
+ '— Агент 1 «Квалификатор»: приём обращений, определение ветки (продажа оборудования / запчасти и сервис / эскалация), квалификация, саммари менеджеру по продажам.\n'+
+ '— Агент 2 «Техподдержка»: подбор запчастей по связке «артикул ↔ модель» из 1С, ответы по расходникам и настройке, FAQ, эскалация старшему менеджеру при нестандартных случаях.\n'+
+ 'Данные у клиента: прайс, соответствие артикулов в 1С, история продаж; база знаний по неисправностям собирается в проекте.\n'+
+ 'Поток: ~25 обращений/день.\n'+
+ 'Ниже — предварительный расчёт с лендинга для составления технического задания.\n'+
+ '────────────────────────────────\n'+
+ 'ВХОДНЫЕ ПАРАМЕТРЫ:\n'+
+ '• Обращений в день: '+v('vLeads')+'\n'+
+ '• Часов на первичку в день: '+v('vHours')+' ч\n'+
+ '• Стоимость часа менеджера: '+v('vRate')+' ₽\n'+
+ '• Потерянные заявки/мес: '+v('vLost')+'\n'+
+ '• Средний чек запчастей: '+v('vCheck')+' ₽\n'+
+ '• Маржа по запчастям: '+v('vMargin')+' %\n'+
+ '• Целевое закрытие агентами: '+v('vCap')+' %\n'+
+ '• Глубина диалога: '+v('vDepth')+' ответов\n'+
+ '• Цена ответа ИИ: '+v('vPrice')+' ₽\n'+
+ '────────────────────────────────\n'+
+ 'ПОТЕРИ СЕЙЧАС:\n'+
+ '• На рутине: '+v('rLabor')+'/мес\n'+
+ '• Упущенная прибыль: '+v('rSales')+'/мес\n'+
+ '• ИТОГО: '+v('rLoss')+'/мес\n'+
+ '────────────────────────────────\n'+
+ 'РЕШЕНИЕ:\n'+
+ '• Аренда КОМФОРТ (2 агента, вкл. 10 000 ₽ токенов): 42 000 ₽/мес\n'+
+ '• Доплата за токены: '+v('rTok')+'/мес\n'+
+ '• Стоимость решения: '+v('rSol')+'/мес\n'+
+ '• Интеграция 1С: 11 000 ₽ разово\n'+
+ '────────────────────────────────\n'+
+ 'ЭФФЕКТ:\n'+
+ '• Возвращаем агентами: '+v('rRec')+'/мес\n'+
+ '• Чистый выигрыш: '+v('rNet')+'/мес\n'+
+ '• Окупаемость контракта: '+v('rPay')+'\n'+
+ '• '+v('rRoi')+'\n'+
+ '────────────────────────────────\n'+
+ 'Запуск поэтапный: внутренние тесты → один канал под контролем → все каналы.\n'+
+ 'Расчёт ориентировочный, точные KPI фиксируются в ТЗ после аудита.';
+}
+
+function copyKpi(){
+ var text=kpiText();
+ function done(){showToast('Расчёт и контекст проекта скопированы — отправьте интегратору (MAX или Telegram)');}
+ function fallback(){
+  var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');done();}catch(e){showToast('Не удалось скопировать — выделите текст результатов вручную');}
+  document.body.removeChild(ta);
+ }
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,fallback);}
+ else fallback();
+}
+document.getElementById('copyBtn').addEventListener('click',copyKpi);
+
+function showToast(msg){
+ var toast=$('toast');toast.textContent=msg;toast.classList.add('on');
+ clearTimeout(window.__tt);window.__tt=setTimeout(function(){toast.classList.remove('on');},2600);
+}
+
+calc();
+</script>
+</body>
+</html>
