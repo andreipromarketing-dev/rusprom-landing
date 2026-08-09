@@ -617,17 +617,44 @@ function kpiText(){
  'Расчёт ориентировочный, точные KPI фиксируются в ТЗ после аудита.';
 }
 
+function fallbackCopy(text){
+ var ta=document.createElement('textarea');
+ ta.value=text;
+ ta.setAttribute('readonly','');
+ ta.style.cssText='position:fixed;top:-9999px;left:-9999px';
+ document.body.appendChild(ta);
+ ta.focus();ta.select();ta.setSelectionRange(0,text.length);
+ var ok=false;
+ try{ok=document.execCommand('copy');}catch(e){}
+ document.body.removeChild(ta);
+ return ok;
+}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function showManualCopy(text){
+ var old=document.getElementById('copyModal');
+ if(old)old.parentNode.removeChild(old);
+ var m=document.createElement('div');
+ m.id='copyModal';
+ m.style.cssText='position:fixed;inset:0;z-index:999;background:rgba(9,13,19,.92);display:flex;align-items:center;justify-content:center;padding:20px';
+ m.innerHTML='<div style="background:#16202f;border:1px solid #26374e;border-radius:16px;padding:24px;max-width:640px;width:100%">'+
+  '<div style="font-size:15px;color:#e8eef6;margin-bottom:12px">Браузер заблокировал автокопирование. Выделите всё и нажмите <b>Ctrl+C</b>:</div>'+
+  '<textarea readonly id="copyManual" style="width:100%;height:260px;background:#0c1118;color:#e8eef6;border:1px solid #26374e;border-radius:10px;padding:12px;font-size:13px;box-sizing:border-box">'+escHtml(text)+'</textarea>'+
+  '<div style="text-align:center;margin-top:14px"><button class="btn" id="copyModalClose">Закрыть</button></div></div>';
+ document.body.appendChild(m);
+ m.addEventListener('click',function(e){if(e.target.id==='copyModalClose'||e.target.id==='copyModal')m.parentNode.removeChild(m);});
+ var ta=document.getElementById('copyManual');
+ ta.focus();ta.select();ta.setSelectionRange(0,ta.value.length);
+}
 function copyKpi(){
  var text=kpiText();
- function done(){showToast('Расчёт и контекст проекта скопированы — отправьте интегратору (MAX или Telegram)');}
- function fallback(){
-  var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
-  document.body.appendChild(ta);ta.select();
-  try{document.execCommand('copy');done();}catch(e){showToast('Не удалось скопировать — выделите текст результатов вручную');}
-  document.body.removeChild(ta);
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+  navigator.clipboard.writeText(text).then(function(){showToast('Расчёт и контекст проекта скопированы — отправьте интегратору (MAX или Telegram)');},function(){finishCopy(text);});
  }
- if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,fallback);}
- else fallback();
+ else{finishCopy(text);}
+}
+function finishCopy(text){
+ if(fallbackCopy(text)){showToast('Расчёт и контекст проекта скопированы — отправьте интегратору (MAX или Telegram)');}
+ else{showManualCopy(text);}
 }
 document.getElementById('copyBtn').addEventListener('click',copyKpi);
 
